@@ -26,7 +26,7 @@ import logging
 import os
 import time
 from colorama import Fore, Back, Style
-
+from pdu_sender import send_dis7_entity_state_pdu
 import pmt
 from gnuradio import gr
 import numpy as np
@@ -260,6 +260,8 @@ PLANE_TIMEOUT_S = 1*60
 INSERTS_PER_TRANSACTION = 50
 FT_PER_METER = 3.28084
 
+
+
 class decoder(gr.sync_block):
     """
     docstring for block decoder
@@ -491,6 +493,8 @@ class decoder(gr.sync_block):
 
             num_msgs = "{:4d}".format(self.plane_dict[icao]["num_msgs"])
             age = "{:3.0f}".format(int(time.time()) - self.plane_dict[icao]["last_seen"])
+
+            send_dis7_entity_state_pdu(latitude.strip(),longitude.strip(), altitude.strip(), speed.strip(), vertical_rate.strip(), heading.strip(), icao.strip(), callsign.strip())
 
             self.screen.addstr(2 + index, 0, "{:8s} {:6s} {} {} {} {} {} {} {} {}".format(
                 last_seen,
